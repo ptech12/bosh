@@ -53,7 +53,8 @@ void bosh()
 char *read_input()
 {
     // for memory allocations and initializations
-    int buffer_size = RL_BUFFER_SIZE, pos = 0, c;
+    int buffer_size = RL_BUFFER_SIZE, pos = 0;
+    char c;
     // allocate some memory
     char *buffer = malloc(buffer_size * sizeof(char));
     // checking buffer allocated or not
@@ -83,3 +84,40 @@ char *read_input()
         }
     }
 }
+
+char **split_into_tokens(char* lines)
+{
+    // initialzing buffer size
+    int buffer_size = RL_BUFFER_SIZE, pos = 0;
+    // allocating memory
+    char** tokens = malloc(buffer_size * sizeof(char*));
+    char* token = NULL;
+    // checking for proper memory allocation
+    if (!tokens)
+        allocate_error_message();
+
+    // splitting the lines by strtok
+    token = strtok(lines, TOKEN_DEL);
+    // while token not null, split it
+    while (token != NULL)
+    {
+        tokens[pos] = token;
+        pos++;
+        // if more means, reallocate it
+        if (pos >= buffer_size)
+        {
+            buffer_size += TK_BUFFER_SIZE;
+            tokens = realloc(tokens, buffer_size);
+            if (!tokens)
+                allocate_error_message();
+        }
+    }
+    tokens[pos] = NULL;
+    return tokens;
+}
+
+// heart of the bosh, the commands execution
+//int bosh_execute(char** args)
+//{
+//    
+//}
