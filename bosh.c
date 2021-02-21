@@ -3,6 +3,9 @@
 #include <string.h>
 #include <stdlib.h>
 #include "definitions.h"
+//for getting process id
+#include <sys/types.h>
+#include <unistd.h>
 // functions declarations
 // the starting of shell, bosh()
 void bosh();
@@ -117,7 +120,34 @@ char **split_into_tokens(char* lines)
 }
 
 // heart of the bosh, the commands execution
-//int bosh_execute(char** args)
-//{
-//    
-//}
+int bosh_execute(char** args)
+{
+    pid_t cpid;
+    int status;
+    if (strcmp(args[0], "exit"))
+        return bosh_exit();
+    cpid = fork();
+    if (cpid == 0)
+    {
+        if (execvp(args[0], args) < 0)
+        {
+            fprintf(stderr, "bash: %scommand not found%s", RED, RESET);
+            exit(EXIT_FAILURE);
+        }
+    }
+    else if (cpid < 0)
+    {
+        fprintf(stderr, "bash: %sError Forking%s", RED, RESET);
+    }
+    else
+    {
+        waitpid(cpid, &status, WUNTRACED);
+    }
+    return 1;
+}
+
+// finally, exit the bosh
+int bosh_exit()
+{
+    return 0;
+}
