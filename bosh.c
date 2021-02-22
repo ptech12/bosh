@@ -45,7 +45,7 @@ void bosh()
         // read input
         line = read_input();
         args = split_into_tokens(line);
-        status = bosh_execute();
+        status = bosh_execute(args);
         // free up some memory;
         free(line);
         free(args);
@@ -57,7 +57,7 @@ char *read_input()
 {
     // for memory allocations and initializations
     int buffer_size = RL_BUFFER_SIZE, pos = 0;
-    char c;
+    int c;
     // allocate some memory
     char *buffer = malloc(buffer_size * sizeof(char));
     // checking buffer allocated or not
@@ -86,12 +86,13 @@ char *read_input()
                 allocate_error_message();
         }
     }
+    return buffer;
 }
 
 char **split_into_tokens(char* lines)
 {
     // initialzing buffer size
-    int buffer_size = RL_BUFFER_SIZE, pos = 0;
+    int buffer_size = TK_BUFFER_SIZE, pos = 0;
     // allocating memory
     char** tokens = malloc(buffer_size * sizeof(char*));
     char* token = NULL;
@@ -114,6 +115,7 @@ char **split_into_tokens(char* lines)
             if (!tokens)
                 allocate_error_message();
         }
+        token = strtok(lines, TOKEN_DEL);
     }
     tokens[pos] = NULL;
     return tokens;
